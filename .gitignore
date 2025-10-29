@@ -1,0 +1,3 @@
+#To ignore bytecode, pyd files and __pycache__ directories
+__pychache__/
+*.py[cd]
