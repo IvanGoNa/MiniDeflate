@@ -1,11 +1,4 @@
 
-a= "ABAB"
-b= "ABCDEFABC"
-c= "ABABABABA"
-d= "AAAAAAA"
-e= "ABCDEFG"
-f= "ABABXABABY"
-
 def LZ77(string, lab_length, sb_length):
 
     #info to compress
@@ -112,14 +105,30 @@ def isBetween(a, b, c):
     return (a > b and a < c)
 
 
-prueba1 = b"dalajdafdallajdalla"
-prueba2=  b"jdallajda"
-#print(lengthOfLongestCoincidentSequence(prueba1, prueba2))
+def LZ77decompressor(compressed):
+    decompressed = []
+    #We analyze one tuple at a time
+    for tuple in compressed:
+        p,n,c = tuple
+        #If n > 0, we copy n elements from the decompressed buffer,
+        #starting p positions backwards.
+        for i in range(0,n):
+            decompressed.append(decompressed[-p])
+
+        #Append the next literal symbol c (if any)
+        decompressed.append(c)
+
+    #We join the list generating a string
+    return "".join(decompressed)
 
 
-print(LZ77(a,4,6))
-print(LZ77(b,4,6)) 
-print(LZ77(c,4,6))
-print(LZ77(d,4,6))
-print(LZ77(e,4,6))
-print(LZ77(f,4,6))
+def testLZ77(string_list, lab_length, sb_length):
+    for index, string in enumerate(string_list):
+        print("---------------- TEST ", index ," -----------------")
+        print("String to compress: ", string)
+        print("Result of compression: ", string_compressed := LZ77(string, lab_length, sb_length))
+        print("Result of decompression: ", string_decompressed :=LZ77decompressor(string_compressed), "\n")
+        assert string == string_decompressed
+    
+testing_list = ["ABAB", "ABCDEFABC", "ABABABABA", "AAAAAAA", "ABCDEFG", "ABABXABABY"]
+testLZ77(testing_list, 4, 6)
