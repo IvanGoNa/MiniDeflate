@@ -1,13 +1,12 @@
 
-def LZ77(string, lab_length, sb_length):
+def LZ77(data, lab_length, sb_length):
 
     #info to compress
-    info = list(string)
-
-    #search_buffer of length 6
+    info = data
+    #seºarch_buffer of length sb_length
     search_buffer=[]
 
-    #look ahead buffer of length 4
+    #look ahead buffer of length lab_length
     lab = info[0:lab_length] 
 
     #contains the compressed info
@@ -32,8 +31,8 @@ def LZ77(string, lab_length, sb_length):
             #p-> number of backwards jumps to do to get from the current byte to the byte were the sequence starts      
             p = len(search_buffer)-beginning
 
-            #c-> new byte to add to the tuple, is "" if there is no more bytes to add
-            c = info[n_byte+n]  if (n_byte+n) < len(info) else ""
+            #c-> new byte to add to the tuple, is byte 0 if there is no more bytes to add <- This will have to change
+            c = info[n_byte+n]  if (n_byte+n) < len(info) else 0
 
         #We add to the search buffer those bytes present in the sequence found (if found)
         for i in range(0, n+1):
@@ -106,7 +105,7 @@ def isBetween(a, b, c):
 
 
 def LZ77decompressor(compressed):
-    decompressed = []
+    decompressed = bytearray()
     #We analyze one tuple at a time
     for tuple in compressed:
         p,n,c = tuple
@@ -119,6 +118,4 @@ def LZ77decompressor(compressed):
         decompressed.append(c)
 
     #We join the list generating a string
-    return "".join(decompressed)
-
-    
+    return decompressed
