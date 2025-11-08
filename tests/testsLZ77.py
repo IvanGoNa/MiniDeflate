@@ -10,5 +10,5 @@ def testLZ77(string_list, lab_length, sb_length):
         assert string == string_decompressed
 
 
-testing_list = ["ABAB", "ABCDEFABC", "ABABABABA", "AAAAAAA", "ABCDEFG", "ABABXABABY"]
+testing_list = [b"ABAB", b"ABCDEFABC", b"ABABABABA", b"AAAAAAA", b"ABCDEFG", b"ABABXABABY"]
 testLZ77(testing_list, 4, 6)

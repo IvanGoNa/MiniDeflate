@@ -25,7 +25,6 @@ def main():
     if args.compress:
         #https://www.w3schools.com/python/ref_func_open.asp
         with open(args.filename, "rb") as file:
-            #utf-8 is giving problems, I'll have to fix that, for the moment latin1 is ok for testing
             data = file.read()
             compressed = LZ77(data, lab_length=17000, sb_length=32000)
             file.close()
@@ -35,33 +34,34 @@ def main():
                 #We use 2 bytes for numbers (n & p < 65.536)
                 file.write(p.to_bytes(2,'big'))
                 file.write(n.to_bytes(2,'big'))
-                file.write(bytes([c]))
+                if c is not None:
+                    file.write(c.to_bytes(1,'big'))
 
-            file.close
+            file.close()
 
     if args.decompress:
         with open(args.filename, "rb") as file:
             compressed = []
             while True:
                 #Each tuple in our compressed files were 5 bytes long
-                tuple = file.read(5)
-                #We read until no more t
-                if len(tuple) < 5:
+                token = file.read(5)
+                #We read until no more tuples are left
+                if len(token) < 4:
                     break
                 #https://www.geeksforgeeks.org/python/how-to-convert-bytes-to-int-in-python/
-                p = int.from_bytes(tuple[0:2], "big")
-                n = int.from_bytes(tuple[2:4], "big")
-                #I get a strange error if done tuple[4].decode(...) -> tells me tuple[4] is an int
-                c = tuple[4]#.to_bytes().decode("latin1")
+                p = int.from_bytes(token[0:2], "big")
+                n = int.from_bytes(token[2:4], "big")
+                try:
+                    c = token[4]
+                except IndexError:
+                    c = None
 
                 compressed.append((p,n,c))
             file.close
         
-        #We encode it with latin1 and then we tell that the 
-        decompressed =  LZ77decompressor(compressed)#.encode("latin1")
-        with open("decompressed.md", "wb") as output:
+        decompressed = LZ77decompressor(compressed)
+        with open("dec.md", "wb") as output:
             output.write(decompressed)
-            output.close
 
 
 if __name__=="__main__":
