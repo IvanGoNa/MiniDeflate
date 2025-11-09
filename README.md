@@ -6,7 +6,7 @@ This is a lightweight educational project aimed at understanding how data compre
 
 ## Installation and Requirements
 
-With Python 3.6 or higher should work fine. 
+Works with Python 3.6 or later
 
 Clone the repository and navigate into it:
 
@@ -28,14 +28,13 @@ For the moment the list below is implemented:
 - **testLZ77**: A simple test to ensure LZ77 compression and decompression works well with simple strings converted to bytes.
 - **testRecovery**: A simple test to ensure compression and decompression works well with real markdown files.
 
->[!WARNING]
->This means compression and decompression is only fully implemented for Markdown files and only using LZ77 algorithm.
+> ⚠️ **Warning:** This means compression and decompression is only fully implemented for Markdown files and only using LZ77 algorithm.
 
->[!NOTE] testRecovery
->This tests only ensures that a file that has been compressed and decompressed is identical to the original one. Usage: `python -m tests.testRecovery 'filename'`
+>> 🧪 **Test note - testRecovery:** This tests only ensures that a file that has been compressed and decompressed is identical to the original one. Usage: `python -m tests.testRecovery 'filename'`
+
 ## How to use MiniDeflate
 
-MiniDeflate has to possibilites right now: compression and decompression. Currently is only using LZ77 algorithm. 
+MiniDeflate currently supports two operations: compression and decompression. Currently, it only uses LZ77 algorithm. 
 
 In order to compress a file, option `-c` or `--compress` should be used, the following instruction shows it:
 
@@ -48,7 +47,7 @@ This will generate a binary file called `output.lz77`,
 `output.lz77` content is the one that should be used to recover the original file. This is done with the option `-d` or `--decompress`, as shown in the instruction below:
 
 ```bash
-python -m MiniDeflate -c 'output.lz77' #Or another filename, if is has been changed"
+python -m MiniDeflate -d 'output.lz77' #Or another filename, if it has been changed"
 python -m MiniDeflate --decompress 'output.lz77'
 ```
 
