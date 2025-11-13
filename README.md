@@ -22,15 +22,15 @@ No external dependencies are required.
 For the moment the list below is implemented:
 - **LZ77 compression**
 - **LZ77 decompression**
-- **MiniDeflate to compress any file**: It will generate a binary file named `output.lz77`
-- **MiniDeflate to decompress `output.lz77`:** It generates a Markdown file named `dec.md`. 
-- **MiniDeflate can be used with a Command-line interface with argparse**
-- **testLZ77**: A simple test to ensure LZ77 compression and decompression works well with simple strings converted to bytes.
-- **testRecovery**: A simple test to ensure compression and decompression works well with real markdown files.
+- **mini_deflate to compress any file**: It will generate a binary file named `output.lz77`
+- **mini_deflate to decompress `output.lz77`:** It generates a Markdown file named `dec.md`. 
+- **mini_deflate can be used with a Command-line interface with argparse**
+- **test_lz77**: A simple test to ensure LZ77 compression and decompression works well with simple strings converted to bytes.
+- **test_recovery**: A simple test to ensure compression and decompression works well with real markdown files.
 
 > ⚠️ **Warning:** This means compression and decompression is only fully implemented for text files and only using LZ77 algorithm.
 
-> 🧪 **Test note - testRecovery:** This tests only ensures that a file that has been compressed and decompressed is identical to the original one. Usage: `python -m tests.testRecovery 'filename'`
+> 🧪 **Test note - test_Recovery:** This tests only ensures that a file that has been compressed and decompressed is identical to the original one. Usage: `python -m tests.test_recovery 'filename'`
 
 ## How to use MiniDeflate
 
@@ -39,7 +39,7 @@ MiniDeflate currently supports two operations: compression and decompression. Cu
 In order to compress a file, option `-c` or `--compress` should be used, the following instruction shows it:
 
 ```bash
-python -m MiniDeflate -c 'filename'
+python -m mini_deflate -c 'filename'
 ```
 
 This will generate a binary file called `output.lz77`, 
@@ -47,8 +47,8 @@ This will generate a binary file called `output.lz77`,
 `output.lz77` content is the one that should be used to recover the original file. This is done with the option `-d` or `--decompress`, as shown in the instruction below:
 
 ```bash
-python -m MiniDeflate -d 'output.lz77' #Or another filename, if it has been changed
-python -m MiniDeflate --decompress 'output.lz77'
+python -m mini_deflate -d 'output.lz77' #Or another filename, if it has been changed
+python -m mini_deflate --decompress 'output.lz77'
 ```
 
 ## Examples
@@ -61,7 +61,7 @@ As an example of compression effectiveness up to this point, the first seven cha
 After running testRecovery the following output is obtained:
 
 ```console
-$~ python -m tests.testRecovery '.\examples\quixote.txt'
+$~ python -m tests.test_recovery '.\examples\quixote.txt'
 Files are Identical
 ```
 ## Roadmap: Next Steps
@@ -73,7 +73,7 @@ Files are Identical
 
 ## License 
 
-This project is licensed under the [MIT License](./LICENSE).
+This project is licensed under the [MIT License](./LICENSE.md).
 
 
 Developed by Iván Gómez as part of a personal learning project of data compression

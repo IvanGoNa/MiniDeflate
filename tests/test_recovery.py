@@ -1,5 +1,5 @@
 import argparse
-from src.LZ77 import LZ77, LZ77decompressor
+from src.lz77 import LZ77, LZ77decompressor
 
 parser = argparse.ArgumentParser(prog ='testRecovery', 
                                      description='A test command to prove is the result of MiniDeflate after decompression remains identical to the original file', 
@@ -32,7 +32,6 @@ with open("output.lz77", "rb") as file:
         #We read until no more tuples are left
         if len(token) < 4:
             break
-        #https://www.geeksforgeeks.org/python/how-to-convert-bytes-to-int-in-python/
         p = int.from_bytes(token[0:2], "big")
         n = int.from_bytes(token[2:4], "big")
         try:

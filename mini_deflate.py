@@ -2,11 +2,10 @@
 
 import argparse
 
-from src.LZ77 import LZ77, LZ77decompressor
+from src.lz77 import LZ77, LZ77decompressor
 
 
 def main():
-    #https://docs.python.org/es/3/library/argparse.html#argumentparser-objects
     parser = argparse.ArgumentParser(prog ='MiniDeflate', 
                                      description='A mini-compressor for text files using LZ77 and Huffmann coding', 
                                      add_help=True)
@@ -19,11 +18,9 @@ def main():
 
     parser.add_argument('filename', help="Input file path")
 
-    #https://ellibrodepython.com/python-argparse
     args = parser.parse_args()
     
     if args.compress:
-        #https://www.w3schools.com/python/ref_func_open.asp
         with open(args.filename, "rb") as file:
             data = file.read()
             compressed = LZ77(data, lab_length=17000, sb_length=32000)
@@ -43,12 +40,11 @@ def main():
         with open(args.filename, "rb") as file:
             compressed = []
             while True:
-                #Each tuple in our compressed files were 5 bytes long
+                #Each tuple in our compressed files are 5 bytes long
                 token = file.read(5)
                 #We read until no more tuples are left
                 if len(token) < 4:
                     break
-                #https://www.geeksforgeeks.org/python/how-to-convert-bytes-to-int-in-python/
                 p = int.from_bytes(token[0:2], "big")
                 n = int.from_bytes(token[2:4], "big")
                 try:
