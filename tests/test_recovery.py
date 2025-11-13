@@ -1,16 +1,16 @@
 import argparse
-from src.lz77 import LZ77, LZ77decompressor
+from src.lz77 import LZ77
 
 parser = argparse.ArgumentParser(prog ='testRecovery', 
                                      description='A test command to prove is the result of MiniDeflate after decompression remains identical to the original file', 
                                      add_help=True)
 parser.add_argument('filename', help="Input file path")
 args = parser.parse_args()
-
+compressor = LZ77()
 ######################### COMPRESSION #################################
 with open(args.filename, "rb") as file:
             data = file.read()
-            compressed = LZ77(data, lab_length=17000, sb_length=32000)
+            compressed = compressor.compress(data)
             file.close()
 
 with open("output.lz77", "wb") as file:
@@ -42,7 +42,7 @@ with open("output.lz77", "rb") as file:
         compressed.append((p,n,c))
     file.close
         
-    decompressed = LZ77decompressor(compressed)
+    decompressed = compressor.decompress(compressed)
     with open("dec.md", "wb") as output:
         output.write(decompressed)
 
