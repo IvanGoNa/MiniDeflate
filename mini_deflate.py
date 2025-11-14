@@ -4,7 +4,6 @@ import argparse
 
 from src.lz77 import LZ77
 
-
 def main():
     parser = argparse.ArgumentParser(prog ='MiniDeflate', 
                                      description='A mini-compressor for text files using LZ77 and Huffmann coding', 
@@ -20,42 +19,22 @@ def main():
 
     args = parser.parse_args()
     compressor = LZ77()
+
     if args.compress:
+
         with open(args.filename, "rb") as file:
             data = file.read()
-            compressed = compressor.compress(data)
-            file.close()
+            
+        compressed_data = compressor.compress(data)
 
-        with open("output.lz77", "wb") as file:
-            for p,n,c in compressed:
-                #We use 2 bytes for numbers (n & p < 65.536)
-                file.write(p.to_bytes(2,'big'))
-                file.write(n.to_bytes(2,'big'))
-                if c is not None:
-                    file.write(c.to_bytes(1,'big'))
-
-            file.close()
+        compressor.write("output.lz77", compressed_data)
 
     if args.decompress:
-        with open(args.filename, "rb") as file:
-            compressed = []
-            while True:
-                #Each tuple in our compressed files are 5 bytes long
-                token = file.read(5)
-                #We read until no more tuples are left
-                if len(token) < 4:
-                    break
-                p = int.from_bytes(token[0:2], "big")
-                n = int.from_bytes(token[2:4], "big")
-                try:
-                    c = token[4]
-                except IndexError:
-                    c = None
 
-                compressed.append((p,n,c))
-            file.close
-        
+        compressed = compressor.read(args.filename)
+
         decompressed = compressor.decompress(compressed)
+
         with open("dec.md", "wb") as output:
             output.write(decompressed)
 

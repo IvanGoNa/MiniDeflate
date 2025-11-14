@@ -9,3 +9,11 @@ class Compressor(ABC):
     @abstractmethod
     def decompress(self):
         pass
+    
+    @abstractmethod
+    def read(self,filename):
+        pass
+
+    @abstractmethod
+    def write(self, filename, data):
+        pass
