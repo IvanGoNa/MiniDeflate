@@ -3,15 +3,15 @@ from abc import ABC
 
 class Compressor(ABC):
     @abstractmethod
-    def compress(self):
+    def compress(self,data):
         pass
 
     @abstractmethod
-    def decompress(self):
+    def decompress(self, compressed_data):
         pass
     
     @abstractmethod
-    def read(self,filename):
+    def read(self, filename):
         pass
 
     @abstractmethod
