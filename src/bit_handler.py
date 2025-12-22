@@ -74,14 +74,31 @@ class BitReader():
 
         return bit
     
-    def read_byte(self):
+    def read_bytes(self, n_bytes):
 
         if self.byte_index * 8 + self.bit_index >= self.total_bits:
             return None
         
-        byte = self.data[self.byte_index]
-        self.byte_index += 1
+        remaining_bytes = (self.total_bits - (self.bit_index + self.byte_index*8))//8
+
+        if n_bytes > remaining_bytes:
+            raise ValueError(f"Trying to read {n_bytes} but only {remaining_bytes} are left")
+        
+        byte = self.data[self.byte_index : self.byte_index+n_bytes]
+        self.byte_index += n_bytes
+
         return byte
+    
+    def read_remaining_bytes(self):
+        """
+        Reads all the remaining bytes only if the current bit to read is byte-aligned 
+        That means bit_index == 0.
+        """
+
+        if self.bit_index != 0:
+            raise ValueError("Reader not byte-aligned")
+        
+        return self.data[self.byte_index:]
     
     def restart(self):
         self.byte_index = 0
