@@ -17,7 +17,7 @@ class LZ77(Compressor):
 
         search_buffer= bytearray()
         look_ahead_buffer = info[0:self.LAB_LENGTH] 
-        compressed = []
+        tuples = []
 
         n_byte = 0; 
         while n_byte < len(info):
@@ -44,9 +44,9 @@ class LZ77(Compressor):
             look_ahead_buffer = info[n_byte: n_byte+self.LAB_LENGTH]
 
             tuple = (distance, length, next_byte)
-            compressed.append(tuple)
+            tuples.append(tuple)
 
-        return compressed
+        return self._serialize(tuples)
 
     def decompress(self, compressed):
         decompressed = bytearray()
@@ -62,16 +62,8 @@ class LZ77(Compressor):
         return decompressed
     
     def write(self, filename, compressed_data):
-         
          with open(filename, "wb") as file:
-
-            for distance, length, next_byte in compressed_data:
-                #We use 2 bytes for distance_to_begginning and length
-                #We are representing bytes as integers --> to_bytes(...)
-                file.write(distance.to_bytes(self.N_BYTES_FOR_INTEGERS,'big'))
-                file.write(length.to_bytes(self.N_BYTES_FOR_INTEGERS,'big'))
-                if next_byte is not None:
-                    file.write(next_byte.to_bytes(self.N_BYTES_FOR_ELEMENTS,'big'))
+            file.write(compressed_data)
 
     def read(self, filename):
 
@@ -95,6 +87,7 @@ class LZ77(Compressor):
         return compressed_data
 
     def _length_of_longest_coincident_sequence(self, search_buffer, look_ahead_buffer):
+
         maximum_length = 0
         beginning_index = 0
 
@@ -108,3 +101,17 @@ class LZ77(Compressor):
                     break
 
         return beginning_index, maximum_length
+    
+    def _serialize(self, tuples):
+        compressed = bytearray()
+
+        for distance, length, next_byte in tuples:
+                #We use 2 bytes for distance_to_begginning and length
+                #We are representing bytes as integers --> to_bytes(...)
+                compressed.extend(distance.to_bytes(self.N_BYTES_FOR_INTEGERS,'big'))
+                compressed.extend(length.to_bytes(self.N_BYTES_FOR_INTEGERS,'big'))
+                if next_byte is not None:
+                    compressed.extend(next_byte.to_bytes(self.N_BYTES_FOR_ELEMENTS,'big'))
+
+
+        return compressed
