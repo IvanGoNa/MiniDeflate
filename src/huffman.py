@@ -58,7 +58,7 @@ class Huffman(Compressor):
 
     def decompress(self, compressed_info):
         decompressed = bytearray()
-        code, padding, data = compressed_info
+        code, padding, data = self._deserialize(compressed_info)
         bit_reader = BitReader(data, padding)
 
         length = 1
@@ -77,21 +77,18 @@ class Huffman(Compressor):
         return decompressed
     
     
-    def read(self,filename):
-         
-        with open(filename, "rb") as file:
-            lengths_size = int.from_bytes(file.read(2), "big")
-            lengths = file.read(lengths_size)
+    def _deserialize(self, data):
+        reader = BitReader(data,0)
 
-            code = self._reconstruct_code(lengths)
-            padding = int.from_bytes(file.read(1), "big")
-            data = file.read()
+        lengths_size = int.from_bytes(reader.read_bytes(2), "big")
+        lengths = reader.read_bytes(lengths_size)
 
+        code = self._reconstruct_code(lengths)
+
+        padding = int.from_bytes(reader.read_bytes(1), "big")
+        data = reader.read_remaining_bytes()
+        
         return (code, padding, data)
-
-    def write(self, filename, compressed_data):
-        with open(filename, "wb") as file:
-            file.write(bytes(compressed_data))
     
     def _compress_lengths(self, lengths):
 
@@ -114,9 +111,9 @@ class Huffman(Compressor):
         reader = BitReader(lengths, 0)
         extracted_lengths = []
 
-        while symbol:=reader.read_byte():
-            length = reader.read_byte()
-            extracted_lengths.append((symbol, length))
+        while symbol:=reader.read_bytes(1):
+            length = reader.read_bytes(1)
+            extracted_lengths.append((int.from_bytes(symbol), int.from_bytes(length)))
 
         codeGenerator = CanonicalHuffmanCodeGenerator(extracted_lengths)
         return codeGenerator.inverse_code

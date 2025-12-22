@@ -1,23 +1,28 @@
 import argparse
 from src.lz77 import LZ77
+from src.huffman import Huffman
 
 parser = argparse.ArgumentParser(prog ='testRecovery', 
                                      description='A test command to prove is the result of MiniDeflate after decompression remains identical to the original file', 
                                      add_help=True)
 parser.add_argument('filename', help="Input file path")
 args = parser.parse_args()
-compressor = LZ77()
+compressor = Huffman()
+
 ######################### COMPRESSION #################################
 
 with open(args.filename, "rb") as file:
             data = file.read()
 
 compressed_data = compressor.compress(data)
-compressor.write("output.lz77", compressed_data)
+
+with open("output.mdf", "wb") as file:
+    file.write(compressed_data)
 
 
 ######################### DECOMPRESSION #################################
-compressed_data = compressor.read("output.lz77")
+with open("output.mdf", "rb") as file:
+    compressed_data = file.read()
 
 decompressed = compressor.decompress(compressed_data)
 

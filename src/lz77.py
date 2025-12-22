@@ -1,5 +1,6 @@
 
 from src.compressor import Compressor
+from src.bit_handler import BitReader
 
 """
 LZ77 is a lossless compression algorithm that replaces sequences of repeated bytes with references to them.
@@ -7,11 +8,11 @@ It generates tuples that follow the structure (distance, length, next_byte).
 In this implementation distance and length are stored using 2 bytes each, and next_byte uses 1 byte.
 """
 class LZ77(Compressor):
-    TUPLE_SIZE = 5
     LAB_LENGTH = 32000
     SB_LENGTH = 32000
     N_BYTES_FOR_INTEGERS = 2
     N_BYTES_FOR_ELEMENTS = 1
+    TUPLE_SIZE = N_BYTES_FOR_INTEGERS*2 + N_BYTES_FOR_ELEMENTS
 
     def compress(self, info):
 
@@ -50,7 +51,8 @@ class LZ77(Compressor):
 
     def decompress(self, compressed):
         decompressed = bytearray()
-        for token in compressed:
+        data = self._deserialize(compressed)
+        for token in data:
             distance, length, next_byte = token
             #If length > 0, we copy length elements from the decompressed buffer, starting distance positions backwards.
             for _ in range(0,length):
@@ -60,31 +62,28 @@ class LZ77(Compressor):
                 decompressed.append(next_byte)
 
         return decompressed
-    
-    def write(self, filename, compressed_data):
-         with open(filename, "wb") as file:
-            file.write(compressed_data)
 
-    def read(self, filename):
-
-        with open(filename, "rb") as file:
-            compressed_data = []
-            while True:
-                token = file.read(self.TUPLE_SIZE)
-                #We read until no more tuples are left
-                if len(token) < self.TUPLE_SIZE - 1:
-                    break
-                distance = int.from_bytes(token[0:2], "big")
-                length = int.from_bytes(token[2:4], "big")
-
-                try:
-                    next_byte = token[4]
-                except IndexError:
-                    next_byte = None
-
-                compressed_data.append((distance, length, next_byte))
+    def _deserialize(self, compressed_data):
+        """
+        Converts a bytearray containing LZ77 compressed_data info into a list of tuples in order 
+        to decompress the data.
+        """
         
-        return compressed_data
+        tuples = []
+        reader = BitReader(compressed_data, 0)
+
+        while token:=reader.read_bytes(self.TUPLE_SIZE):
+            distance = int.from_bytes(token[0:2], "big")
+            length = int.from_bytes(token[2:4], "big")
+
+            try:
+                next_byte = token[4]
+            except IndexError:
+                next_byte = None
+
+            tuples.append((distance, length, next_byte))
+        
+        return tuples
 
     def _length_of_longest_coincident_sequence(self, search_buffer, look_ahead_buffer):
 
@@ -103,6 +102,9 @@ class LZ77(Compressor):
         return beginning_index, maximum_length
     
     def _serialize(self, tuples):
+        """
+        Converts a list of LZ77 tuples to a bytearray in order to return the compressed data.
+        """
         compressed = bytearray()
 
         for distance, length, next_byte in tuples:

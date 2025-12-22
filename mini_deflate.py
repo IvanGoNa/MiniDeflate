@@ -2,6 +2,7 @@
 
 import argparse
 
+from src.huffman import Huffman
 from src.lz77 import LZ77
 
 def main():
@@ -18,7 +19,7 @@ def main():
     parser.add_argument('filename', help="Input file path")
 
     args = parser.parse_args()
-    compressor = LZ77()
+    compressor = Huffman()
 
     if args.compress:
 
@@ -27,13 +28,15 @@ def main():
             
         compressed_data = compressor.compress(data)
 
-        compressor.write("output.lz77", compressed_data)
+        with open("output.mdf", "wb") as file:
+            file.write(compressed_data)
 
     if args.decompress:
 
-        compressed = compressor.read(args.filename)
+        with open(args.filename, "rb") as file:
+            data = file.read()
 
-        decompressed = compressor.decompress(compressed)
+        decompressed = compressor.decompress(data)
 
         with open("dec.md", "wb") as output:
             output.write(decompressed)
